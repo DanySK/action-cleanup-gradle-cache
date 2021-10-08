@@ -1,0 +1,19 @@
+name: 'Cleanup the Gradle cache'
+description: 'Stops the Gradle daemon and cleans up the cache'
+runs:
+  using: "composite"
+  steps:
+    - name: Turn off the Gradle Daemon
+      shell: bash
+      run: ./gradlew --stop
+    - name: Cleanup the Gradle cache
+      if: ${{ runner.os != 'Windows' }}
+      shell: bash
+      run: |
+        rm -f ~/.gradle/caches/modules-2/modules-2.lock
+        rm -f ~/.gradle/caches/modules-2/gc.properties
+    - name: Force the Gradle cleanup on Windows
+      if: ${{ runner.os == 'Windows' }}
+      run: |
+        Remove-Item -Force c:\Users\runneradmin\.gradle\caches\modules-2\modules-2.lock
+        Remove-Item -Force c:\Users\runneradmin\.gradle\caches\modules-2\gc.properties
